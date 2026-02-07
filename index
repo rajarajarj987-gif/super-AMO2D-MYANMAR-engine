@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>9.0 - SERVER DATA ONLY</title>
+    <style>
+        :root { --gold: #d4af37; --bg: #050505; --card: #111; --modern: #00d2ff; --internet: #9d50bb; --success: #2ecc71; --danger: #ff4757; }
+        body { background-color: var(--bg); color: #eee; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 10px; }
+        .master-container { width: 100%; max-width: 480px; background: #000; border: 1.5px solid #222; border-radius: 30px; padding: 15px; box-sizing: border-box; margin: auto; }
+        
+        /* PROTONS TYPE TABS */
+        .proton-tabs { 
+            display: flex; 
+            gap: 10px; 
+            margin-bottom: 20px; 
+            background: #0a0a0a; 
+            padding: 8px; 
+            border-radius: 20px;
+            border: 1px solid #222;
+        }
+        .proton-tab { 
+            flex: 1; 
+            padding: 14px 5px; 
+            border-radius: 15px; 
+            border: 1px solid transparent; 
+            background: transparent; 
+            color: #666; 
+            cursor: pointer; 
+            font-weight: 800; 
+            font-size: 11px;
+            text-align: center;
+            letter-spacing: 1px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+        .proton-tab.active { 
+            background: linear-gradient(145deg, #1a1a1a, #000);
+            color: var(--gold); 
+            border-color: var(--gold);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.2);
+            transform: translateY(-2px);
+        }
+        .proton-tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        .proton-tab:hover::before {
+            left: 100%;
+        }
+        .proton-tab:hover:not(.active) {
+            background: rgba(255,255,255,0.03);
+            border-color: #333;
+            color: #999;
+        }
+        
+        .page { display: none; animation: fadeIn 0.3s ease; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Live Hero Section - PROTONS VIBE */
+        .live-hero { 
+            background: linear-gradient(145deg, #080808, #000); 
+            border-radius: 25px; 
+            padding: 25px; 
+            text-align: center; 
+            margin-bottom: 20px; 
+            border: 1px solid #222;
+            position: relative;
+            overflow: hidden;
+        }
+        .live-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(212,175,55,0.05) 0%, transparent 70%);
+            animation: protonPulse 8s infinite linear;
+        }
+        @keyframes protonPulse {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .live-label { 
+            font-size: 9px; 
+            color: #666; 
+            letter-spacing: 3px; 
+            margin-bottom: 10px; 
+            display: block; 
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+        .main-live-number { 
+            font-size: 80px; 
+            font-weight: 900; 
+            color: var(--success); 
+            font-family: 'Orbitron'; 
+            margin: 15px 0;
+            text-shadow: 0 0 20px rgba(46, 204, 113, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+        .live-time-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 15px; 
+            margin-top: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .live-time-box { 
+            padding: 15px; 
+            border-radius: 20px; 
+            background: linear-gradient(145deg, #000, #111);
+            border: 1px solid #222; 
+            transition: all 0.3s ease;
+        }
+        .live-time-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        .live-time-label { 
+            font-size: 10px; 
+            color: #777; 
+            margin-bottom: 8px; 
+            font-weight: 600;
+        }
+        .live-time-value { 
+            font-size: 28px; 
+            font-weight: 900; 
+            font-family: 'Orbitron'; 
+            color: var(--gold);
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+        }
+        
+        /* Live Real Time Grid - PROTONS DESIGN */
+        .live-realtime-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 12px; 
+            margin: 20px 0;
+        }
+        .realtime-box { 
+            background: linear-gradient(145deg, #111, #0a0a0a);
+            border-radius: 20px; 
+            padding: 20px; 
+            text-align: center; 
+            border: 1px solid #222;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+        .realtime-box::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, currentColor, transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .realtime-box:hover::after {
+            opacity: 0.7;
+        }
+        .realtime-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+        }
+        .realtime-label { 
+            font-size: 10px; 
+            color: #aaa; 
+            margin-bottom: 12px; 
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        .realtime-value { 
+            font-size: 32px; 
+            font-weight: 900; 
+            font-family: 'Orbitron'; 
+            text-shadow: 0 0 15px rgba(255,255,255,0.1);
+        }
+        .realtime-3d { 
+            border-left: 5px solid var(--danger);
+            color: var(--danger);
+        }
+        .realtime-tw { 
+            border-left: 5px solid #ff9f43;
+            color: #ff9f43;
+        }
+        
+        /* Section Titles - PROTONS STYLE */
+        .section-title { 
+            font-size: 14px; 
+            font-weight: 800; 
+            margin: 25px 0 15px; 
+            color: #fff; 
+            padding-bottom: 10px;
+            border-bottom: 2px solid #333;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            position: relative;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--gold), transparent);
+        }
+        
+        /* Result Confirmation - PROTONS DESIGN */
+        .confirmation-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 15px; 
+            margin-bottom: 30px;
+        }
+        .confirm-box { 
+            background: linear-gradient(145deg, #0a0a0a, #000);
+            border-radius: 22px; 
+            padding: 20px; 
+            border: 1px solid #333; 
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .confirm-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(212, 175, 55, 0.1);
+            border-color: var(--gold);
+        }
+        .confirm-label { 
+            font-size: 11px; 
+            color: #aaa; 
+            margin-bottom: 15px; 
+            display: block;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        .confirm-value { 
+            font-size: 48px; 
+            font-weight: 900; 
+            font-family: 'Orbitron'; 
+            color: var(--gold);
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+        
+        /* Modern & Internet Pairs - PROTONS VIBE */
+        .pairs-section { margin-bottom: 30px; }
+        .pairs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .pair-card { 
+            background: linear-gradient(145deg, #111, #0a0a0a);
+            border-radius: 20px; 
+            padding: 20px; 
+            border: 1px solid #333; 
+            text-align: center;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .pair-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 25px rgba(0,0,0,0.4);
+        }
+        .pair-time { 
+            font-size: 11px; 
+            color: #777; 
+            margin-bottom: 12px; 
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        .pair-value { 
+            font-size: 36px; 
+            font-weight: 900; 
+            font-family: 'Orbitron'; 
+            color: #fff;
+            text-shadow: 0 0 15px rgba(255,255,255,0.1);
+        }
+        .modern { 
+            border-left: 5px solid var(--modern);
+            border-top: 1px solid rgba(0, 210, 255, 0.2);
+        }
+        .internet { 
+            border-left: 5px solid var(--internet);
+            border-top: 1px solid rgba(157, 80, 187, 0.2);
+        }
+        
+        /* History Table - PROTONS DESIGN */
+        .history-card { 
+            background: linear-gradient(145deg, #0a0a0a, #000);
+            border-radius: 25px; 
+            padding: 20px; 
+            border: 1px solid #222; 
+            margin-bottom: 20px; 
+            overflow-x: auto;
+        }
+        table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 12px; text-align: center; }
+        th { 
+            color: #666; 
+            padding: 15px 10px; 
+            font-size: 11px; 
+            border-bottom: 2px solid #222; 
+            font-weight: 700;
+            letter-spacing: 1px;
+            background: rgba(0,0,0,0.5);
+        }
+        td { 
+            padding: 18px 10px; 
+            border-bottom: 1px solid rgba(255,255,255,0.05); 
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+        tr:hover td {
+            background: rgba(212, 175, 55, 0.05);
+        }
+        .date-cell { color: #777; font-weight: normal; }
+        
+        /* Refresh Button - PROTONS ULTRA */
+        .refresh-btn { 
+            width: 100%; 
+            padding: 20px; 
+            background: linear-gradient(145deg, var(--gold), #b8860b);
+            border: none; 
+            border-radius: 20px; 
+            font-weight: 900; 
+            color: #000; 
+            cursor: pointer; 
+            margin-top: 15px; 
+            font-size: 14px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
+        }
+        .refresh-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.7s ease;
+        }
+        .refresh-btn:hover::before {
+            left: 100%;
+        }
+        .refresh-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(212, 175, 55, 0.5);
+            background: linear-gradient(145deg, #ffd700, var(--gold));
+        }
+        .refresh-btn:active {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+        }
+        
+        /* Live Status */
+        .live-status { 
+            font-size: 10px; 
+            color: #666; 
+            text-align: center; 
+            margin-top: 15px;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        
+        /* PROTONS GLOW EFFECT */
+        .glow-effect {
+            position: relative;
+        }
+        .glow-effect::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--gold), var(--success), var(--modern), var(--internet));
+            border-radius: inherit;
+            z-index: -1;
+            filter: blur(15px);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .glow-effect:hover::after {
+            opacity: 0.5;
+        }
+        
+        /* RESPONSIVE */
+        @media (max-width: 400px) {
+            .main-live-number { font-size: 60px; }
+            .confirm-value { font-size: 36px; }
+            .pair-value { font-size: 28px; }
+            .realtime-value { font-size: 26px; }
+            .live-time-value { font-size: 24px; }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="master-container">
+    <!-- PROTONS TYPE TABS -->
+    <div class="proton-tabs">
+        <button class="proton-tab active" onclick="openPage('live-page', this)">⚡ LIVES</button>
+        <button class="proton-tab" onclick="openPage('history-page', this)">📜 HISTORY</button>
+    </div>
+
+    <!-- LIVE PAGE -->
+    <div id="live-page" class="page active">
+        <div class="live-hero glow-effect">
+            <span class="live-label">REAL-TIME SERVICE</span>
+            <div class="main-live-number" id="live-2d">--</div>
+            
+            <div class="live-time-grid">
+                <div class="live-time-box">
+                    <div class="live-time-label">12:01 PM</div>
+                    <div class="live-time-value" id="live-12">--</div>
+                </div>
+                <div class="live-time-box">
+                    <div class="live-time-label">04:31 PM</div>
+                    <div class="live-time-value" id="live-16">--</div>
+                </div>
+            </div>
+            
+            <div class="live-status" id="live-clock">🔄 LOADING...</div>
+        </div>
+
+        <!-- Real Time Live Data -->
+        <div class="live-realtime-grid">
+            <div class="realtime-box realtime-3d glow-effect">
+                <div class="realtime-label">THAI 3D</div>
+                <div class="realtime-value" id="live-3d">---</div>
+            </div>
+            <div class="realtime-box realtime-tw glow-effect">
+                <div class="realtime-label">TAIWAN 2D</div>
+                <div class="realtime-value" id="tw-2d">--</div>
+            </div>
+        </div>
+
+        <div class="section-title">RESULT CONFIRMATION</div>
+        <div class="confirmation-grid">
+            <div class="confirm-box glow-effect">
+                <span class="confirm-label">MORNING 12:01</span>
+                <div class="confirm-value" id="confirm-12">--</div>
+            </div>
+            <div class="confirm-box glow-effect">
+                <span class="confirm-label">EVENING 04:30</span>
+                <div class="confirm-value" id="confirm-16">--</div>
+            </div>
+        </div>
+
+        <div class="section-title">MODERN & INTERNET PAIRS</div>
+        <div class="pairs-section">
+            <div class="pairs-grid">
+                <div class="pair-card modern glow-effect">
+                    <div class="pair-time">09:30 AM MODERN</div>
+                    <div class="pair-value" id="mod-09">--</div>
+                </div>
+                <div class="pair-card modern glow-effect">
+                    <div class="pair-time">02:00 PM MODERN</div>
+                    <div class="pair-value" id="mod-14">--</div>
+                </div>
+            </div>
+            <div class="pairs-grid" style="margin-top: 15px;">
+                <div class="pair-card internet glow-effect">
+                    <div class="pair-time">12:01 PM INTERNET</div>
+                    <div class="pair-value" id="int-12">--</div>
+                </div>
+                <div class="pair-card internet glow-effect">
+                    <div class="pair-time">04:30 PM INTERNET</div>
+                    <div class="pair-value" id="int-16">--</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HISTORY PAGE -->
+    <div id="history-page" class="page">
+        <div class="section-title">📊 2D HISTORY</div>
+        <div class="history-card glow-effect">
+            <table id="history-table">
+                <thead>
+                    <tr><th>DATE</th><th>TIME</th><th>RESULT</th></tr>
+                </thead>
+                <tbody id="history-body">
+                    <!-- Dynamic content will be inserted here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <button class="refresh-btn glow-effect" onclick="fetchAllData()">
+        ⚡ REFRESH ALL DATA
+    </button>
+</div>
+
+<script>
+    const API_KEY = "2d33e7fd9cmshed62a232961d59cp1e7e91jsn5690f63247a7";
+    const API_HOST = "myanmar-all-in-one-2d-results.p.rapidapi.com";
+    
+    let lastData = null;
+    let drawTimes = [
+        { time: "12:01", elementId: "confirm-12", type: "morning" },
+        { time: "16:31", elementId: "confirm-16", type: "evening" }
+    ];
+
+    function openPage(pageId, btn) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.proton-tab').forEach(b => b.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+        btn.classList.add('active');
+        
+        // Add proton effect
+        btn.style.transform = "translateY(-3px)";
+        setTimeout(() => {
+            if(btn.classList.contains('active')) {
+                btn.style.transform = "translateY(-2px)";
+            } else {
+                btn.style.transform = "translateY(0)";
+            }
+        }, 300);
+    }
+
+    function updateClock() {
+        const now = new Date();
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const seconds = now.getSeconds().toString().padStart(2, '0');
+        const currentTime = `${hours}:${minutes}:${seconds}`;
+        
+        // Add proton pulsing effect to clock
+        const clockEl = document.getElementById('live-clock');
+        clockEl.textContent = `🕒 ${currentTime}`;
+        
+        // Change color based on time
+        if (seconds % 2 === 0) {
+            clockEl.style.color = "#00ff00";
+            clockEl.style.textShadow = "0 0 10px #00ff00";
+        } else {
+            clockEl.style.color = "#666";
+            clockEl.style.textShadow = "none";
+        }
+        
+        // Check if it's draw time
+        const currentHM = `${hours}:${minutes}`;
+        
+        drawTimes.forEach(draw => {
+            if (currentHM === draw.time) {
+                // Proton animation for draw time
+                const drawEl = document.getElementById(draw.elementId);
+                if(drawEl) {
+                    drawEl.style.animation = "none";
+                    setTimeout(() => {
+                        drawEl.style.animation = "protonPulse 0.5s ease";
+                    }, 10);
+                }
+                
+                // Fetch new data
+                fetchAllData();
+                
+                // Show notification
+                showProtonNotification(`⚡ ${draw.type.toUpperCase()} DRAW TIME!`);
+            }
+        });
+    }
+
+    function showProtonNotification(message) {
+        // Create proton notification
+        const notification = document.createElement('div');
+        notification.textContent = message;
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(145deg, #000, #111);
+            color: var(--gold);
+            padding: 15px 25px;
+            border-radius: 15px;
+            border: 2px solid var(--gold);
+            font-weight: 900;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
+            animation: protonSlideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        `;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.animation = "protonSlideOut 0.5s ease forwards";
+            setTimeout(() => notification.remove(), 500);
+        }, 3000);
+    }
+
+    async function fetchAllData() {
+        try {
+            // Proton loading effect
+            const refreshBtn = document.querySelector('.refresh-btn');
+            refreshBtn.innerHTML = "🔄 LOADING...";
+            refreshBtn.style.background = "linear-gradient(145deg, #333, #000)";
+            
+            const liveRes = await fetch(`https://${API_HOST}/api/v1/live`, {
+                headers: {
+                    'x-rapidapi-key': API_KEY,
+                    'x-rapidapi-host': API_HOST
+                }
+            });
+            
+            const liveData = await liveRes.json();
+            
+            if (liveData.data) {
+                lastData = liveData.data;
+                updateLiveDisplay(lastData);
+                updateHistory(lastData);
+                
+                // Proton success effect
+                refreshBtn.innerHTML = "✅ DATA UPDATED";
+                refreshBtn.style.background = "linear-gradient(145deg, #2ecc71, #27ae60)";
+                setTimeout(() => {
+                    refreshBtn.innerHTML = "⚡ REFRESH ALL DATA";
+                    refreshBtn.style.background = "linear-gradient(145deg, var(--gold), #b8860b)";
+                }, 2000);
+                
+                // Save to cache
+                localStorage.setItem('cached_data', JSON.stringify(liveData.data));
+                localStorage.setItem('cached_time', new Date().toISOString());
+                
+                // Proton update animation
+                protonUpdateAnimation();
+            }
+        } catch (error) {
+            console.log('Using cached data...');
+            
+            // Proton error effect
+            refreshBtn.innerHTML = "❌ OFFLINE MODE";
+            refreshBtn.style.background = "linear-gradient(145deg, #ff4757, #c23616)";
+            setTimeout(() => {
+                refreshBtn.innerHTML = "⚡ REFRESH ALL DATA";
+                refreshBtn.style.background = "linear-gradient(145deg, var(--gold), #b8860b)";
+            }, 2000);
+            
+            const cachedData = localStorage.getItem('cached_data');
+            if (cachedData) {
+                lastData = JSON.parse(cachedData);
+                updateLiveDisplay(lastData);
+                document.getElementById('live-clock').textContent = "📡 OFFLINE (Cached Data)";
+                document.getElementById('live-clock').style.color = "#ff4757";
+            }
+        }
+    }
+
+    function protonUpdateAnimation() {
+        // Add proton effect to all number elements
+        const numberElements = document.querySelectorAll('.main-live-number, .confirm-value, .pair-value, .realtime-value');
+        numberElements.forEach(el => {
+            el.style.transform = "scale(1.1)";
+            el.style.textShadow = "0 0 30px currentColor";
+            setTimeout(() => {
+                el.style.transform = "scale(1)";
+                el.style.textShadow = "0 0 15px rgba(255,255,255,0.1)";
+            }, 300);
+        });
+    }
+
+    function updateLiveDisplay(data) {
+        // Proton number animation
+        const updateWithProton = (elementId, value) => {
+            const element = document.getElementById(elementId);
+            if(element) {
+                element.style.transform = "scale(1.2)";
+                element.style.opacity = "0.7";
+                setTimeout(() => {
+                    element.textContent = value || "--";
+                    element.style.transform = "scale(1)";
+                    element.style.opacity = "1";
+                }, 150);
+            }
+        };
+        
+        // Live 2D ဂဏန်း
+        updateWithProton('live-2d', data.live);
+        updateWithProton('live-12', data.live);
+        updateWithProton('live-16', data.live);
+        updateWithProton('live-3d', data.three_d);
+        updateWithProton('tw-2d', data.tw_result);
+        updateWithProton('confirm-12', data.mResult);
+        updateWithProton('confirm-16', data.eResult);
+        updateWithProton('mod-09', data.mModern);
+        updateWithProton('mod-14', data.eModern);
+        updateWithProton('int-12', data.mInternet);
+        updateWithProton('int-16', data.eInternet);
+    }
+
+    function updateHistory(data) {
+        const historyBody = document.getElementById('history-body');
+        
+        const today = new Date();
+        const dateStr = today.toLocaleDateString('my-MM', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric'
+        });
+        
+        // Proton table animation
+        historyBody.style.opacity = "0.5";
+        historyBody.style.transform = "translateY(10px)";
+        
+        setTimeout(() => {
+            let html = `
+                <tr>
+                    <td class="date-cell">${dateStr}</td>
+                    <td><span style="color: var(--modern); font-weight: 900;">12:01</span></td>
+                    <td style="color: var(--gold); font-size: 20px; font-weight: 900; text-shadow: 0 0 10px rgba(212,175,55,0.3);">${data.mResult || "--"}</td>
+                </tr>
+                <tr>
+                    <td class="date-cell">${dateStr}</td>
+                    <td><span style="color: var(--internet); font-weight: 900;">16:30</span></td>
+                    <td style="color: var(--gold); font-size: 20px; font-weight: 900; text-shadow: 0 0 10px rgba(212,175,55,0.3);">${data.eResult || "--"}</td>
+                </tr>
+            `;
+            
+            historyBody.innerHTML = html;
+            historyBody.style.opacity = "1";
+            historyBody.style.transform = "translateY(0)";
+        }, 200);
+    }
+
+    // Initialize with PROTONS POWER
+    window.onload = function() {
+        // Add CSS animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes protonSlideIn {
+                from { top: -100px; opacity: 0; }
+                to { top: 20px; opacity: 1; }
+            }
+            @keyframes protonSlideOut {
+                from { top: 20px; opacity: 1; }
+                to { top: -100px; opacity: 0; }
+            }
+            @keyframes protonPulse {
+                0%, 100% { transform: scale(1); text-shadow: 0 0 15px currentColor; }
+                50% { transform: scale(1.1); text-shadow: 0 0 30px currentColor; }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Initial fetch
+        fetchAllData();
+        
+        // Proton clock
+        setInterval(updateClock, 1000);
+        updateClock();
+        
+        // Auto refresh every 30 seconds
+        setInterval(fetchAllData, 30000);
+        
+        // Initial proton animation
+        setTimeout(() => {
+            protonUpdateAnimation();
+        }, 1000);
+    };
+</script>
+</body>
+</html>
