@@ -1,0 +1,7 @@
+deploy BY AMO 
+AUNG MOE OO 
+MYAWADDY CITY MYANMAR ,KAYIN STATE , 31051
+2D LIVE WEB APP
+ကူးယူပြသချင်း မပြု 
+
+
